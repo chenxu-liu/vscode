@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -92,31 +91,104 @@ void printAny(const T &a, ARGS...args) {
     return ;
 }
 
-
-template<typename T,typename...ARGS>
-struct ARG{
-    typedef T __type;
-    typedef ARG<ARGS...> __rest; 
+template<int n, typename T, typename ...ARGS>
+struct ARG {
+    typedef typename ARG<n - 1, ARGS...>::__type __type;
 };
-template<typename T>
-struct ARG<T>{
+
+template<typename T, typename ...ARGS>
+struct ARG<0, T, ARGS...> {
     typedef T __type;
+};
+
+template<typename T>
+struct ARG<0, T> {
+    typedef T __type;
+    typedef T __final;
 };
 
 template<typename T, typename ...ARGS> class Test;
 template<typename T, typename ...ARGS>
 class Test<T(ARGS...)> {
 public :
-    T operator()(
-        typename ARG<ARGS...>::__type a, 
-        typename ARG<ARGS...>::__rest::__type b) {
-        return a + b;
+    T operator()(ARGS... args) {
+        return add<T>(args...);
+    }
+private:
+    template<typename T1, typename U, typename ...US>
+    T1 add(U a, US ...args) {
+        return a + add<T1>(args...);
+    }
+    template<typename T1, typename U>
+    T1 add(U a) {
+        return a;
     }
 };
 
+template<typename T, typename U>
+T test_param_func(U a) {
+    return T(a * 2);
 }
 
+void func2(int (*func)(double)) {
+    cout << func(2.3) << endl;
+}
+
+template<typename T> struct remove_reference { typedef T type; };
+template<typename T> struct remove_reference<T &> { typedef T type; };
+template<typename T> struct remove_reference<T &&> { typedef T type; };
+
+template<typename T>
+typename remove_reference<T>::type add2(T &&a, T &&b) {
+    typename remove_reference<T>::type c = a + b;
+    return c;
+}
+//add_const
+template<typename T> struct add_const{ typedef const T type;};
+//add_lvalue_reference
+template<typename T> struct add_lvalue_reference{ typedef T& type;};
+template<typename T> struct add_lvalue_reference<T &&> { typedef T& type; };
+//add_lvalue_reference
+template<typename T> struct add_rvalue_reference{ typedef T&& type;};
+template<typename T> struct add_rvalue_reference<T &> { typedef T&& type; };
+//remove_pointer  
+// template<typename T> struct remove_pointer{ typedef T type;};
+// template<typename T> struct remove_pointer<T *>{ typedef T type;};
+//move
+template<typename T> 
+// T && move(T && t){
+//     return static_cast<T&&>(t);
+// }
+typename add_rvalue_reference<T>::type move(T &&a){
+    return typename add_rvalue_reference<T>::type(a);
+}
+void f(int &x){
+    cout << "f :left" << endl;
+    return ;
+}
+void f(int &&x){
+    cout << "f :right" <<endl;
+    return ;
+}
+} // end of haizei
+
 int main() {
+    int inta = 123, intb = 456;
+    cout << haizei::add2(inta, intb) << endl;
+    cout << haizei::add2(123, 456) << endl;
+    haizei::func2(haizei::test_param_func);
+    //remove_pointer
+    typedef haizei::remove_pointer<int*>::type B;
+    std::cout << "B: " << std::is_same<int,B>::value << std::endl;
+    // add_lvalue_reference
+    typedef haizei::add_lvalue_reference<int>::type C;
+    std::cout << "C: " << std::is_same<int&,C>::value << std::endl;  
+    // add_rvalue_reference
+    typedef haizei::add_rvalue_reference<int>::type D;
+    std::cout << "D: " << std::is_same<int&&,D>::value << std::endl;
+    //add_const
+    typedef std::add_const<int>::type E;
+      std::cout << "E: " << std::is_const<E>::value << std::endl;   
     A a(1000);
     B b(645);
     cout << a + b << endl;
@@ -148,5 +220,11 @@ int main() {
     haizei::printAny(123, 34.5, "hello world", &a);
     haizei::Test<int(int, int)> f3;
     cout << f3(3, 4) << endl;
+
+    haizei::Test<int(int, int, int, int)> f4;
+    cout << f4(1, 2, 3, 4) << endl;
+
+    haizei::Test<int(int, int, int, int, int)> f5;
+    cout << f5(1, 2, 3, 4, 5) << endl;
     return 0;
 }

@@ -178,7 +178,7 @@ int main() {
     cout << haizei::add2(123, 456) << endl;
     haizei::func2(haizei::test_param_func);
     //remove_pointer
-    typedef haizei::remove_pointer<int*>::type B;
+   // typedef haizei::remove_pointer<int*>::type B;
     std::cout << "B: " << std::is_same<int,B>::value << std::endl;
     // add_lvalue_reference
     typedef haizei::add_lvalue_reference<int>::type C;

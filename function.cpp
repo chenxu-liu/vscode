@@ -1,5 +1,3 @@
-
-
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -67,9 +65,8 @@ public :
 
 private:
     base<RT, PARAMS...> *ptr;
-    //static int cnt;
 };
-//function :: static int cnt = 0;
+
 } // end of haizei
 
 void f(function<int(int, int)> g) {
@@ -81,18 +78,27 @@ int add(int a, int b) {
     return a + b;
 }
 
-
 struct MaxClass {
     int operator()(int a, int b) {
         return a > b ? a : b;
     }
 };
-class Functioncnt{
-public:
-    Functioncnt(function<int(int,int)> &g) :g(g){
-            
+
+template<typename T>
+class FunctionCnt {
+public :
+    FunctionCnt(function<T(T, T)> g) : g(g), __cnt(0) {}
+    int operator()(T a, T b) {
+        __cnt += 1;
+        return g(a, b);
     }
-}
+    int cnt() { return __cnt; }
+
+private:
+    function<T(T, T)> g;
+    int __cnt;
+};
+
 int main() {
     MaxClass max;
     f(add);
@@ -101,5 +107,17 @@ int main() {
     haizei::function<int(int, int)> g2(max);
     cout << g1(3, 4) << endl;
     cout << g2(3, 4) << endl;
+    
+    FunctionCnt<int> add_cnt(add);
+    add_cnt(3, 4);
+    add_cnt(4, 5);
+    add_cnt(7, 9);
+    cout << add_cnt.cnt() << endl;
+    // FunctionCnt<int> add_cnt2(add);
+    // add_cnt2(3.0, 4.4);
+    // add_cnt2(4.5, 5.0);
+    // add_cnt2(7.4, 9.4);
+    //  add_cnt2(7.4, 9.4);
+    // cout << add_cnt2.cnt() << endl;
     return 0;
 }

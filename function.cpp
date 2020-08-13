@@ -84,18 +84,32 @@ struct MaxClass {
     }
 };
 
-template<typename T>
-class FunctionCnt {
-public :
-    FunctionCnt(function<T(T, T)> g) : g(g), __cnt(0) {}
-    int operator()(T a, T b) {
+// template<typename T>
+// class FunctionCnt {
+// public :
+//     FunctionCnt(function<T(T, T)> g) : g(g), __cnt(0) {}
+//     int operator()(T a, T b) {
+//         __cnt += 1;
+//         return g(a, b);
+//     }
+//     int cnt() { return __cnt; }
+
+// private:
+//     function<T(T, T)> g;
+//     int __cnt;
+// };
+template<typename RT, typename ...PARAMS> class FunctionCnt;
+template<typename RT, typename ...PARAMS>
+class FunctionCnt<RT(PARAMS...)> {
+public:
+    FunctionCnt(haizei::function<RT(PARAMS...)> g) : g(g), __cnt(0) {}
+    RT operator()(PARAMS... args) {
         __cnt += 1;
-        return g(a, b);
+        return g(args...);
     }
     int cnt() { return __cnt; }
-
 private:
-    function<T(T, T)> g;
+    function<RT(PARAMS...)> g;
     int __cnt;
 };
 
@@ -108,12 +122,12 @@ int main() {
     cout << g1(3, 4) << endl;
     cout << g2(3, 4) << endl;
     
-    FunctionCnt<int> add_cnt(add);
+    FunctionCnt<int(int,int)> add_cnt(add);
     add_cnt(3, 4);
     add_cnt(4, 5);
     add_cnt(7, 9);
     cout << add_cnt.cnt() << endl;
-    // FunctionCnt<int> add_cnt2(add);
+    // FunctionCnt<float> add_cnt2(add);
     // add_cnt2(3.0, 4.4);
     // add_cnt2(4.5, 5.0);
     // add_cnt2(7.4, 9.4);

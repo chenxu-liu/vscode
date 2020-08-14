@@ -102,6 +102,10 @@ template<typename RT, typename ...PARAMS> class FunctionCnt;
 template<typename RT, typename ...PARAMS>
 class FunctionCnt<RT(PARAMS...)> {
 public:
+//template< class F >
+//function( F f );
+//此处是浅拷贝
+
     FunctionCnt(haizei::function<RT(PARAMS...)> g) : g(g), __cnt(0) {}
     RT operator()(PARAMS... args) {
         __cnt += 1;

@@ -54,6 +54,11 @@ struct IsTest {
 };
 
 template<int i>
+struct IsTest<2, i> {
+    static constexpr int r = 1;
+};
+
+template<int i>
 struct IsTest<0, i> {
     static constexpr int r = 1;
 };
@@ -66,6 +71,47 @@ struct IsTest<n, 0> {
 template<int n>
 struct IsPrime {
     static constexpr int r = IsTest<n, 2>::r;
+};
+
+template<int n>
+struct SumPrime {
+    static constexpr int r = (n * IsPrime<n>::r) + SumPrime<n - 1>::r;
+};
+
+template<>
+struct SumPrime<1> {
+    static constexpr int r = 0;
+};
+
+// template<int n>
+// struct printfPrime {
+//     static constexpr int r = (n * IsPrime<n>::r) + SumPrime<n - 1>::r;
+// };
+template<int i, int x>
+struct getNextK2 {
+    constexpr static int r = (i > x ? 0 : 1);
+};
+template<int x>
+struct print_prime {
+    template<int i, int k>
+    struct __output {
+        static void run() {
+            if (IsPrime<i>::r) {
+                cout << i << endl;
+            }
+            print_prime<x>::__output<i + 1, getNextK2<i + 1, x>::r >::run();
+        }
+    };
+    template<int i>
+    struct __output<i, 0> {
+        static void run() {
+            return ;
+        }
+    };
+    static void output() {
+        print_prime<x>::__output<2, 1>::run();
+        return ;
+    }
 };
 
 int main() {
@@ -81,5 +127,10 @@ int main() {
     cout << IsPrime<87>::r << endl;
     cout << IsPrime<1537>::r << endl;
     cout << IsPrime<65>::r << endl;
+
+    cout << SumPrime<10>::r << endl;
+    cout << SumPrime<40>::r << endl;
+     
+     print_prime<100>::output();
     return 0;
 }

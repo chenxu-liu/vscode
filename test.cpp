@@ -19,9 +19,27 @@ using namespace std;
 //     //shape s3=r;
     
 // }
-
-int main(){
-    string n;
-    cin >> n;
-    cout << n;
+template<typename T>
+void my_swap(T &&a, T &&b) {
+    typename remove_reference<T>::type c;
+    c = a;
+    a = b;
+    b = c;
+    return ;
+}
+// template<typename T>
+// void my_swap(T &a, T &b) {
+//     T c;
+//     c = a;
+//     a = b;
+//     b = c;
+//     return ;
+// }
+int main() {
+    int a = 123, b = 456;
+    cout << a << " " << b << endl;
+    my_swap(a, b);
+    cout << a << " " << b << endl;
+    my_swap(move(a), move(b));
+    cout << a << " " << b << endl;
 }

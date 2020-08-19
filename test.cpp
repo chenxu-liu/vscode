@@ -36,33 +36,57 @@
 //     my_swap(move(a), move(b));
 //     cout << a << " " << b << endl;
 // }
-#include <iostream>
-#include<algorithm>
+// #include <iostream>
+// #include<algorithm>
+// using namespace std;
+
+// namespace haizei{
+//     template<typename T>
+//     struct less{
+//         bool operator()(const T &a,const T &b){
+//             return a<b;
+//         }
+//     };
+// }
+// int a = 0;
+
+// int y(){
+//     a++;
+//     return 0;
+// }
+
+// int main(){
+//     int x = 0;
+//     auto inc = [&](){ x++; };
+//     inc();
+//     inc();
+//     y();
+//     cout << a << endl;
+//     int arr[5]={5,6,17,3,5};
+//     sort(arr,arr+5,haizei::less<int>());
+//     return 0;
+// }
+#include <cstdlib>
+#include <string>
+
 using namespace std;
-
-namespace haizei{
-    template<typename T>
-    struct less{
-        bool operator()(const T &a,const T &b){
-            return a<b;
-        }
-    };
-}
-int a = 0;
-
-int y(){
-    a++;
-    return 0;
-}
-
-int main(){
-    int x = 0;
-    auto inc = [&](){ x++; };
-    inc();
-    inc();
-    y();
-    cout << a << endl;
-    int arr[5]={5,6,17,3,5};
-    sort(arr,arr+5,haizei::less<int>());
+class NotCopyable
+{
+     NotCopyable()=default;
+    NotCopyable(const NotCopyable&)=delete;
+    NotCopyable(NotCopyable &&)=delete;
+    NotCopyable& operator=( const NotCopyable&) = delete;
+    NotCopyable& operator= (NotCopyable&&)= delete;
+};
+struct Student:private NotCopyable
+{
+    string name;
+    time_t birtyday;
+};
+int main()
+{
+    Student a;
+    Student b = a;
+    a = b;
     return 0;
 }

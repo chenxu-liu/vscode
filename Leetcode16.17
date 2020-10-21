@@ -1,0 +1,35 @@
+class Solution {
+public:
+    vector<int> pondSizes(vector<vector<int>>& land) {
+        queue<pair<int,int>> q;
+        vector<int> v;
+        int mmap[8][2] = {0,1,0,-1,-1,0,1,0,1,1,-1,1,-1,-1,1,-1};
+        for(int i = 0; i < land.size(); i++){
+            for(int j = 0; j < land[i].size(); j++){
+                if(land[i][j] == 0){
+                    q.push({i,j});
+                    land[i][j] = 1;
+                    int ans = 1;
+                    while(!q.empty()){
+                        for(int k = 0; k < 8; k++){
+                            int temp_x = q.front().first + mmap[k][0];
+                            int temp_y = q.front().second + mmap[k][1];
+                            if(temp_x < 0 || temp_x >= land.size() || temp_y < 0 || temp_y >= land[i].size()){
+                                continue;
+                            }
+                            if(land[temp_x][temp_y] == 0){
+                                ans++;
+                                q.push({temp_x,temp_y});
+                                land[temp_x][temp_y] = 1;
+                            }
+                        }
+                        q.pop();
+                    }
+                    if(ans) v.push_back(ans);
+                }
+            }
+        }
+        sort(v.begin(),v.end());
+        return v;
+    }
+};

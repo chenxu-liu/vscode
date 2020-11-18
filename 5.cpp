@@ -1,39 +1,28 @@
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <queue>
-#include <stack>
-#include <algorithm>
-#include <string>
-#include <map>
-#include <set>
-#include <vector>
-#include <functional>
+#include<iostream>
+#include<ctime>
 using namespace std;
-class Animal{
-public:
-    Animal(const string &name):__name(name){}
-    virtual void run();
-protected:
-    string __name;
-};
-class Cat :public Animal{
-public:
-    Cat():Animal("cat"){}
-    void run() override{
-        cout << "i can run with four legs" << endl;
-    }
-    void say() {
-        cout << "i can say" << endl;
-    }
-
-};
 int main(){
-    Cat a;
-    Animal &b = a;
-    Animal *c = &a;
-    a.run();
-    b.run();
-    c->run();
+    int all, n,w[105],v[105],ans[105][10005];
+    //srand(time(0));
+    //cout << "背包承重：";
+    cin >> all;
+    //cout << "物品数量：";
+    cin >> n;
+
+    for(int i = 1; i <= n; i++){
+       // w[i] = rand()%10;
+        //v[i] = rand()%10;
+        cin >> w[i] >> v[i];
+    }
+    for(int i = 1; i <= n; i++){
+        for(int j = 1; j <= all; j++){
+            if(w[i] > j){
+                ans[i][j] = ans[i-1][j];
+            }else{
+                ans[i][j] = max(ans[i-1][j], v[i] + ans[i-1][j-w[i]]);
+            }
+        }
+    }
+    cout << ans[n][all]<<endl;
     return 0;
-}
+} 

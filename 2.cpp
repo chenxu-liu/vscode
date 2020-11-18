@@ -1,78 +1,48 @@
-#include<iostream>
 #include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<queue>
+#include<algorithm>
+#include<cmath>
 #include<ctime>
-#include<cstdlib>
 using namespace std;
-void quick_sort(int *num, int l, int r) {//快速排序
-    if (r < l) return ;
-    int x = l, y = r, z = num[l]; //以第一个元素为枢纽轴
-    while (x < y) {                  
-        while (x < y && num[y] >= z) y--;//从左面找到第一个比枢纽轴小的元素
-        if (x < y) num[x++] = num[y];    //将它放到空位上
-        while (x < y && num[x] <= z) x++;//从右面找到第一个比枢纽轴大的元素
-        if (x < y) num[y--] = num[x]; //将它放到空位上
-    }
-    num[x] = z;
-    quick_sort(num, l, x - 1);  
-    quick_sort(num, x + 1, r);
-    return ;
+ 
+struct node
+{
+    int begin;
+    int end;
+}Num[10000009];
+bool cmp1(node a, node b)
+{
+    return a.end < b.end ;      //结束时间从小到大排序
 }
-
-int binarySearch(int *nums, int target,int n) {
-    int left = 0, right = n-1;
-
-    while(left!= right) {
-        int mid = left+((right-left)>>1);
-        if (nums[mid] < target) {
-            left = mid+1;
-        } else if (nums[mid] >= target) {
-            right = mid;
-        }
-    }
-    return (nums[left]==target ? left : -1);
-}
-int main(){
-    int num,temp,search_num;
-    cout << "输入生成数据的规模:";
-    cin >> num;
-    cout << "输入查询的数字:";
-    cin >> search_num;
-    FILE *fp;
-    if((fp=fopen("input.txt","w+"))==NULL)
-    {
-        printf("The file %s can not be opened.\n","input.txt");
-        return 0;
-    }
-    //生成数据
+int main()
+{
+    int n;
+    int k=1;
+    int count=1;
     srand(time(0));
-    for(int i = 0; i < num; i++) {
-        temp = rand() % num;
-        fprintf(fp,"%d ",temp);
+    printf("输入规模：");
+    scanf("%d",&n);
+    for(int i=1; i<=n; i++)
+    {   
+        Num[i].begin = rand()%20;
+        Num[i].end = rand()%10+Num[i].begin;
+        //scanf("%d %d", &Num[i].begin , &Num[i].end );       
     }
-    int mmap[num];
-    //将数据使用快速排序
-     rewind(fp);
-    for(int i = 0; i < num; i++) {
-        fscanf(fp,"%d ",&temp);
-       // printf("%d ",temp);
-        mmap[i] = temp;
-    }
-    quick_sort(mmap,0,num-1);
-    int flag = binarySearch(mmap,search_num,num);
-    cout << "数的位置（以0开始，-1为未找到）:"<< flag << endl;
-    for(int i = 0; i < num; i++){
-        printf("%d ", mmap[i]);
-    }
-    FILE *fp1;
-    if((fp1=fopen("output.txt","wb"))==NULL)
+    /* for(int i=1; i<=n; i++){   
+        printf("%d %d  ", Num[i].begin , Num[i].end );       
+    }*/
+    sort(Num+1, Num+n+1, cmp1);
+    for(int i=2; i<=n; i++)
     {
-        printf("The file %s can not be opened.\n","output.txt");
-        return 0;
+        if(Num[i].begin >= Num[1].end)
+        {
+            Num[1].end = Num[i].end ; 
+            count++;            
+        }       
     }
-    for(int i = 0; i < num; i++) {
-       fprintf(fp1,"%d ",mmap[i]);
-    }
-    fclose(fp);
-    fclose(fp1);
+    //cout << endl;
+    printf("最多能安排多少个活动:%d\n",count);
     return 0;
 }
